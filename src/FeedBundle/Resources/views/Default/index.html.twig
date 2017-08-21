@@ -1,0 +1,128 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+
+<div class="row" style="padding-bottom: 10px">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="pull-left">Import feed</h3>
+                <div class="pull-right">Logged in as <strong>{{ app.user.username }}</strong> | <a href="{{ path('logout') }}">Logout</i> </a></div>
+            </div>
+            {% form_theme form 'form/bootstrap_3_layout.html.twig' %}
+            <div class="box-body">
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-1">
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10">
+        <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+                <tbody>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Fullname</th>
+                    <th>Email</th>
+                    <th>Bool</th>
+                    <th>Actions</th>
+                </tr>
+                {% for item in imported %}
+                    <tr style="cursor: pointer" class="accordion-toggle" data-id="{{ item.id }}" data-target="#collapse_{{ loop.index }}" data-toggle="collapse">
+                        <td><i class="fa fa-plus-square-o"></i> {{ item.name }}</td>
+                        <td>{{ item.surname }}</td>
+                        <td>{{ item.fullname }}</td>
+                        <td>{{ item.email }}</td>
+                        <td><i class="fa fa-circle{% if item.bool == 'false' %}-o{% endif %}"></i></td>
+                        <td class="actions">
+                            <a class="text-primary action-edit" href="{{ path('imported_edit', { 'id': item.id }) }}"><i class="fa fa-edit fa-lg"></i> </a>
+                            <a class="text-danger action-delete" href="#"><i class="fa fa-trash fa-lg"></i> </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="hidden-row" colspan="6">
+                            <div id="collapse_{{ loop.index }}">
+                                <table class="table table-hover details" style="display: none">
+                                    <tbody>
+                                        <tr class="table-info"><td>Index</td><td class="text-center">{{ item.index }}</td></tr>
+                                        <tr class="table-info"><td>Index start at</td><td class="text-center">{{ item.indexStartAt }}</td></tr>
+                                        <tr class="table-info"><td>Integer</td><td class="text-center">{{ item.integer }}</td></tr>
+                                        <tr class="table-info"><td>Float</td><td class="text-center">{{ item.float }}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div>
+            {{ knp_pagination_render(imported) }}
+        </div>
+    </div>
+    <div class="col-md-1">
+    </div>
+</div>
+
+<form name="delete_form" method="post" action="{{ path('imported_delete') }}" id="delete-form" style="display: none"><div id="delete_form" id="delete-form" style="display: none"><div><button type="submit" id="delete_form_submit" name="delete_form[submit]">Delete</button></div><input type="hidden" id="delete_form_id" name="id" value="0" /></div></form>
+<div id="modal-delete" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h4>Ar tikrai norite ištrinti pasirinktą įrašą?</h4>
+                <p>Šio veiksmo nebus įmanoma atšaukti.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn">
+                    Atšaukti
+                </button>
+                <button type="button" data-dismiss="modal" class="btn btn-danger" id="modal-delete-button">
+                    <i class="fa fa-trash"></i> Ištrinti
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}
+
+{% block body_javascripts %}
+    <script>
+        $(document).ready(function(){
+            $('tr').on('shown.bs.collapse', function(){
+                $(this).prev().next().find(".details").show();
+                $(this).prev().find(".fa-plus-square-o").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
+            });
+            $('tr').on('hidden.bs.collapse', function(){
+                $(this).prev().find(".fa-minus-square-o").removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
+            });
+
+            $('.actions').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            $('.action-delete').on('click', function(e) {
+                e.preventDefault();
+                var id = $(this).parents('tr').first().data('id');
+                $('#delete_form_id').val(id);
+                $('#modal-delete').modal({ backdrop: true, keyboard: true })
+                        .off('click', '#modal-delete-button')
+                        .on('click', '#modal-delete-button', function () {
+                            var deleteForm = $('#delete-form');
+                            deleteForm.trigger('submit');
+                        });
+            });
+        });
+    </script>
+{% endblock %}
