@@ -17,8 +17,8 @@ class ImportType extends AbstractType
             array(
                 'label' => false,
                 'attr' => array('style' => 'background-color: rgb(240,240,240);'),
-//                'data' => 'https://gist.githubusercontent.com/emodus/27d245484a85c2286722b9d146c53354/raw/c9af224580a22cbde969127527c4500e3f7d2a9e/dummyFeed',
-                'data' => 'dummyFeed.json',
+                'data' => 'https://gist.githubusercontent.com/emodus/27d245484a85c2286722b9d146c53354/raw/c9af224580a22cbde969127527c4500e3f7d2a9e/dummyFeed',
+//                'data' => 'dummyFeed.json',
                 'constraints' => array(
                     new NotBlank(),
                 ),
