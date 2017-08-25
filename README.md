@@ -9,7 +9,7 @@ How to install this project
 ---------------------------
 
   1. `git clone https://github.com/githabas/feedimport.git`
-  1. `cd importuoti`
+  1. `cd feedimport`
   1. `composer install`
   1. `php bin/console doctrine:database:create`
   1. `php bin/console doctrine:schema:create`
